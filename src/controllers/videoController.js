@@ -3,8 +3,15 @@ import Video from "../models/Video";
 //rootRouter
 export const home = (req, res) => {
   //solution1 Call-back
-  Video.find({}, (error, videos) => {});
-  res.render("home", { pageTitle: "HOME", videos });
+  console.log("start");
+  //mongoose will find {} from db then, activates the function after it's done
+  Video.find({}, (error, videos) => {
+    console.log("error", error); // error null
+    console.log("videos", videos); // videos []
+  });
+  console.log("finish");
+  /// you can see the order in console => start -> finish -> error null, videos []
+  res.render("home", { pageTitle: "HOME", videos: [] });
 };
 export const search = (req, res) => {
   res.send("SEARCH VIDEO");
