@@ -1,6 +1,6 @@
 //rootRouter
 export const home = (req, res) => {
-  res.send("HOME");
+  res.render("home");
 };
 export const search = (req, res) => {
   res.send("SEARCH VIDEO");
