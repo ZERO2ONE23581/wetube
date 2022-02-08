@@ -1,4 +1,3 @@
-import "./db"; // server import this file to connect the server to mongodb
 import express from "express";
 import morgan from "morgan";
 import rootRouter from "./routers/rootRouter";
@@ -10,7 +9,6 @@ const app = express();
 const logger = morgan("dev");
 
 //PUG
-console.log(process.cwd());
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
 //APP
@@ -19,8 +17,4 @@ app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 
-//SERVER LISTENING
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`✅ Aiden's server listening on the port http://localhost:${PORT} 🔥`);
-});
+export default app;

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "youtube clone coding using nodejs",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server"
+    "dev": "nodemon --exec babel-node src/init"
   },
   "repository": {
     "type": "git",

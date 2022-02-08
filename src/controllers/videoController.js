@@ -1,17 +1,9 @@
-//fake db
-const videos = [
-  {
-    title: "first video",
-    description: "this is a first video",
-  },
-  {
-    title: "second video",
-    description: "this is a second video",
-  },
-];
+import Video from "../models/Video";
 
 //rootRouter
 export const home = (req, res) => {
+  //solution1 Call-back
+  Video.find({}, (error, videos) => {});
   res.render("home", { pageTitle: "HOME", videos });
 };
 export const search = (req, res) => {
