@@ -1,11 +1,9 @@
 extends base
+include mixins/video
 
 block main
   ul
     each video in videos
-      div
-        h3=video.title
-        ul     
-          li=video.description
+      +videoMixin(video)
     else
       li Nothing found.
