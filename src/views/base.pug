@@ -1,7 +1,21 @@
 doctype html
 html(lang="ko")
   head
-    block head
+    title #{pageTitle} | Wetube
+    link(rel="stylesheet" href="https://unpkg.com/mvp.css")  
   body
-    block body    
+    header 
+      h1=pageTitle
+      nav
+        ul
+          li
+            a(href="/") HOME
+          li
+            a(href="/join") JOIN
+          li
+            a(href="/login") LOGIN
+          li
+            a(href="/search") SEARCH      
+    main
+      block main
   include partials/footer

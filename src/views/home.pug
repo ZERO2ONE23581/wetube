@@ -1,7 +1,11 @@
 extends base
 
-block head
-  title home | Wetube
-
-block body
-  h1 Here will be listed Videos~
+block main
+  ul
+    each video in videos
+      div
+        h3=video.title
+        ul     
+          li=video.description
+    else
+      li Nothing found.

@@ -1,6 +1,18 @@
+//fake db
+const videos = [
+  {
+    title: "first video",
+    description: "this is a first video",
+  },
+  {
+    title: "second video",
+    description: "this is a second video",
+  },
+];
+
 //rootRouter
 export const home = (req, res) => {
-  res.render("home");
+  res.render("home", { pageTitle: "HOME", videos });
 };
 export const search = (req, res) => {
   res.send("SEARCH VIDEO");
