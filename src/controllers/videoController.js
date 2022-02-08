@@ -1,17 +1,16 @@
 import Video from "../models/Video";
 
 //rootRouter
-export const home = (req, res) => {
-  //solution1 Call-back
-  console.log("start");
-  //mongoose will find {} from db then, activates the function after it's done
-  Video.find({}, (error, videos) => {
-    console.log("error", error); // error null
-    console.log("videos", videos); // videos []
-  });
-  console.log("finish");
-  /// you can see the order in console => start -> finish -> error null, videos []
-  res.render("home", { pageTitle: "HOME", videos: [] });
+export const home = async (req, res) => {
+  //PROMISE
+  try {
+    //1. find the db(model)
+    const videos = await Video.find({});
+    return res.render("home", { pageTitle: "HOME", videos });
+  } catch {
+    //2. error handling
+    return res.render("server-error");
+  }
 };
 export const search = (req, res) => {
   res.send("SEARCH VIDEO");
