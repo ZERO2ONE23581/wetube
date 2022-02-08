@@ -1,3 +1,4 @@
+import "./db"; // server import this file to connect the server to mongodb
 import express from "express";
 import morgan from "morgan";
 import rootRouter from "./routers/rootRouter";
