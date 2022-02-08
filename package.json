@@ -1,0 +1,21 @@
+{
+  "name": "wetube",
+  "version": "1.0.0",
+  "description": "youtube clone coding using nodejs",  
+  "scripts": {
+    "dev":"node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZERO2ONE23581/wetube.git"
+  },
+  "author": "aiden kim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZERO2ONE23581/wetube/issues"
+  },
+  "homepage": "https://github.com/ZERO2ONE23581/wetube#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
