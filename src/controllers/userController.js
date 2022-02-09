@@ -1,12 +1,28 @@
-export const join = (req, res) => {
-  res.send("JOIN");
+///Root Router
+//회원가입 Join (Create)
+export const getJoin = (req, res) => {
+  return res.render("join", { pageTitle: "Join" });
 };
-export const login = (req, res) => {
-  res.send("LOGIN");
+export const postJoin = (req, res) => {
+  console.log(req.body);
+  return res.end();
 };
-export const editUser = (req, res) => {
-  res.send("EDIT USER");
+//로그인 Login (Read)
+export const getLogin = (req, res) => {
+  return res.render("join", { pageTitle: "Join" });
 };
+export const postLogin = (req, res) => {
+  return res.redirect("/");
+};
+///User Router
+//유저수정 Edit(Update)
+export const getEditUser = (req, res) => {
+  return res.render("join", { pageTitle: "Join" });
+};
+export const postEditUser = (req, res) => {
+  return res.redirect("/");
+};
+//유저삭제 Delete
 export const deleteUser = (req, res) => {
-  res.send("DELETE USER");
+  return res.redirect("/");
 };
