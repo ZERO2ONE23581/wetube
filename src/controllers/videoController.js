@@ -39,11 +39,9 @@ export const postUpload = async (req, res) => {
   //4. Save the video at the same time
   try {
     await Video.create({
-      title: title,
-      description: description,
-      hashtags: hashtags
-        .split(",")
-        .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+      title,
+      description,
+      hashtags,
     });
     //5. redirect to the page
     return res.redirect("/");

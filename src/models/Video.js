@@ -12,6 +12,14 @@ const videoSchema = new mongoose.Schema({
   },
 });
 
+//Middleware ///activates before you save Model
+videoSchema.pre("save", async function () {
+  console.log(this);
+  this.hashtags = this.hashtags[0]
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`));
+});
+
 //Create the Model with schema
 const Video = mongoose.model("Video", videoSchema);
 export default Video;
