@@ -1,4 +1,8 @@
 extends base
 
-block body
-  h1 Here will be listed Videos you can edit!
+block content
+  form(method='post')
+    input(required, type="text", value=video.title, name="title", placeholder="Title")
+    input(required, type="text", value=video.description, name="description", placeholder="Description")
+    input(required, type="text", value=video.hashtags.join(), name="hashtags", placeholder="Hashtags")
+    input(type="submit", value="Edit Video")
