@@ -3,6 +3,8 @@ extends base
 block content
   div    
     p=video.description
+    each hashtag in video.hashtags
+      li=hashtag
     small=video.createdAt
   a(href=`/videos/${video.id}/edit`) Edit Video &rarr;
   br

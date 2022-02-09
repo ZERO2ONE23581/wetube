@@ -1,4 +1,4 @@
-import Video, { formatHashtags } from "../models/Video";
+import Video from "../models/Video";
 
 //ROOT ROUTER
 //Home (Read)
@@ -43,7 +43,7 @@ export const postUpload = async (req, res) => {
     await Video.create({
       title,
       description,
-      hashtags: formatHashtags(hashtags),
+      hashtags: Video.formatHashtags(hashtags),
     });
     //5. redirect to the page
     return res.redirect("/");
@@ -83,7 +83,7 @@ export const postEdit = async (req, res) => {
     //4. this query will automatically save the data
     title,
     description,
-    hashtags: formatHashtags(hashtags),
+    hashtags: Video.formatHashtags(hashtags),
   });
   //5. Redirect to the 'watch' page
   return res.redirect(`/videos/${id}`);
