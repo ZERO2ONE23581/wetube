@@ -1,10 +1,11 @@
-import Video from "../models/Video";
+import Video, { formatHashtags } from "../models/Video";
 
 //ROOT ROUTER
 //Home (Read)
 export const home = async (req, res) => {
   //1. find the any video ( == database == Video model) that exists => Render 'home' page
   const videos = await Video.find({});
+  console.log(videos);
   return res.render("home", { pageTitle: "HOME", videos });
 };
 
@@ -35,13 +36,14 @@ export const getUpload = (req, res) => {
 export const postUpload = async (req, res) => {
   //2. Data received from 'upload' page
   const { title, description, hashtags } = req.body;
+  console.log(req.body);
   //3. Create new Video; (Data from POST -> Video Model)
   //4. Save the video at the same time
   try {
     await Video.create({
       title,
       description,
-      hashtags,
+      hashtags: formatHashtags(hashtags),
     });
     //5. redirect to the page
     return res.redirect("/");
@@ -81,9 +83,7 @@ export const postEdit = async (req, res) => {
     //4. this query will automatically save the data
     title,
     description,
-    hashtags: hashtags
-      .split(",")
-      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+    hashtags: formatHashtags(hashtags),
   });
   //5. Redirect to the 'watch' page
   return res.redirect(`/videos/${id}`);
