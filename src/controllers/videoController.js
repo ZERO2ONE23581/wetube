@@ -21,8 +21,14 @@ export const search = (req, res) => {
 };
 //VIDEO ROUTER
 //Watch (Read)
-export const watch = (req, res) => {
-  res.send("WATCH VIDEO");
+export const watch = async (req, res) => {
+  //1. Get id from paramter
+  const { id } = req.params;
+  //2. Find the video with the id
+  const video = await Video.findById(id);
+  console.log(video);
+  //3. Use the video data
+  return res.render("watch", { pageTitle: video.title, video });
 };
 
 //Upload (Create)
@@ -35,7 +41,7 @@ export const postUpload = async (req, res) => {
   //2. Create new Video; (Data from POST -> Video Model)
   //3. Save the video at the same time
   try {
-    const video = await Video.create({
+    await Video.create({
       title: title,
       description: description,
       hashtags: hashtags.split(",").map((word) => `#${word}`),
