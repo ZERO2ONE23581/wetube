@@ -5,7 +5,6 @@ import Video from "../models/Video";
 export const home = async (req, res) => {
   //1. find the any video ( == database == Video model) that exists => Render 'home' page
   const videos = await Video.find({});
-  console.log(videos);
   return res.render("home", { pageTitle: "HOME", videos });
 };
 
@@ -36,7 +35,6 @@ export const getUpload = (req, res) => {
 export const postUpload = async (req, res) => {
   //2. Data received from 'upload' page
   const { title, description, hashtags } = req.body;
-  console.log(req.body);
   //3. Create new Video; (Data from POST -> Video Model)
   //4. Save the video at the same time
   try {
@@ -90,6 +88,8 @@ export const postEdit = async (req, res) => {
 };
 
 //Delete
-export const deleteVideo = (req, res) => {
-  res.send("DELETE VIDEO");
+export const deleteVideo = async (req, res) => {
+  const { id } = req.params; //1. find id the video to delete
+  await Video.findByIdAndDelete(id); //2. delete the video by the id
+  return res.redirect("/");
 };
