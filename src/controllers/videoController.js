@@ -7,6 +7,9 @@ export const home = async (req, res) => {
   try {
     //1. find the db(model)
     const videos = await Video.find({});
+    //콘솔로 찍어보면 videos의 _id와 id는 다르다!!
+    console.log(videos[0].id); //6203684d4012121c1e37d946 /// 이 id를 이용하여 videomixin의 a태그의 url을 설정 => watch로 이어지게함
+    console.log(videos[0]._id); //new ObjectId("6203684d4012121c1e37d946")
     return res.render("home", { pageTitle: "HOME", videos });
   } catch {
     //2. error handling
@@ -19,33 +22,33 @@ export const search = (req, res) => {
 //VIDEO ROUTER
 //Watch (Read)
 export const watch = (req, res) => {
-  console.log(req.params);
   res.send("WATCH VIDEO");
 };
 
 //Upload (Create)
 export const getUpload = (req, res) => {
-  res.render("upload", { pageTitle: "Upload Video" });
+  return res.render("upload", { pageTitle: "Upload Video" });
 };
 export const postUpload = async (req, res) => {
-  //1. get data from form in template using POST method
+  //1. Data received from Template(upload.pug)
   const { title, description, hashtags } = req.body;
-  //2. create Document(video with data)
-  const video = new Video({
-    title: title,
-    description: description,
-    createdAt: Date.now(),
-    hashtags: hashtags.split(",").map((word) => `#${word}`),
-    meta: {
-      views: 0,
-      rating: 0,
-    },
-  });
-  console.log(video);
-  //3. save the document in db
-  await video.save();
-  //4. redirect to the page
-  res.redirect("/");
+  //2. Create new Video; (Data from POST -> Video Model)
+  //3. Save the video at the same time
+  try {
+    const video = await Video.create({
+      title: title,
+      description: description,
+      hashtags: hashtags.split(",").map((word) => `#${word}`),
+    });
+    //4. redirect to the page
+    return res.redirect("/");
+  } catch (error) {
+    //5. error handling
+    return res.render("upload", {
+      pageTitle: "Upload Video",
+      errorMessage: error._message,
+    });
+  }
 };
 
 //Edit (Upldate)

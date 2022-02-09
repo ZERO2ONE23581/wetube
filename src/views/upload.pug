@@ -1,8 +1,10 @@
 extends base
 //- action에 찍힌 url로 post를 보내게 되는 것.
 block content
+  if errorMessage
+    span=errorMessage
   form(method='post', action="/videos/upload")
-    input(required, type="text", name="title", placeholder="Title")
-    input(required, type="text", name="description", placeholder="Description")    
+    input(required, type="text", name="title", placeholder="Title", maxlength=20)
+    input(required, type="text", name="description", placeholder="Description", maxlength=20)    
     input(required, type="text", name="hashtags", placeholder="Hashtags, separted by comma.")
     input(type="submit", value="Upload Video")

@@ -1,9 +1,7 @@
-mixin videoMixin(info)
+mixin videoMixin(video)
   div
-    h3=info.title    
-    ul     
-      li=info.description
-      li=info.createdAt
-      li=info.hashtags
-      li=info.meta.views
-      li=info.meta.rating
+    h3
+      a(href=`/videos/${video.id}`)=video.title         
+    p=video.description
+    small=video.createdAt
+    hr

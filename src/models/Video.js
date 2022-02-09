@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 //Define the shape(schema) of the Model
 const videoSchema = new mongoose.Schema({
-  title: { type: String },
-  description: { type: String },
-  createdAt: Date,
-  hashtags: [{ type: String }], //hashtags는 복수임으로 array 형태
+  title: { type: String, required: true, trim: true, maxlength: 20 },
+  description: { type: String, required: true, trim: true, maxlength: 20 },
+  createdAt: { type: Date, required: true, default: Date.now },
+  hashtags: [{ type: String, trim: true }], //hashtags는 복수임으로 array 형태
   meta: {
-    views: { type: Number },
-    rating: { type: Number },
+    views: { type: Number, default: 0, required: true },
+    rating: { type: Number, default: 0, required: true },
   },
 });
 
