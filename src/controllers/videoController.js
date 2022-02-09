@@ -3,18 +3,16 @@ import Video from "../models/Video";
 //ROOT ROUTER
 //Home (Read)
 export const home = async (req, res) => {
-  try {
-    //1. find the any video ( == database == Video model) that exists => Render 'home' page
-    const videos = await Video.find({});
-    return res.render("home", { pageTitle: "HOME", videos });
-  } catch {
-    //2. error handling
-    return res.render("server-error");
-  }
+  //1. find the any video ( == database == Video model) that exists => Render 'home' page
+  const videos = await Video.find({});
+  return res.render("home", { pageTitle: "HOME", videos });
 };
+
+//Search
 export const search = (req, res) => {
   res.send("SEARCH VIDEO");
 };
+
 //VIDEO ROUTER
 //Watch (Read)
 export const watch = async (req, res) => {
@@ -43,7 +41,9 @@ export const postUpload = async (req, res) => {
     await Video.create({
       title: title,
       description: description,
-      hashtags: hashtags.split(",").map((word) => `#${word}`),
+      hashtags: hashtags
+        .split(",")
+        .map((word) => (word.startsWith("#") ? word : `#${word}`)),
     });
     //5. redirect to the page
     return res.redirect("/");
@@ -68,7 +68,24 @@ export const getEdit = async (req, res) => {
   return res.render("edit", { pageTitle: video.title, video });
 };
 export const postEdit = async (req, res) => {
-  return res.redirect(`/`);
+  //1. Receive data from Edit page
+  const { title, description, hashtags } = req.body;
+  //2. find the video to edit by id
+  const { id } = req.params;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.render("404", { pageTitle: "Video Not Found." });
+  }
+  //3. Edit the video with received data
+  video.title = title;
+  video.description = description;
+  video.hashtags = hashtags
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`));
+  //4. Save the new video
+  await video.save();
+  //5. Redirect to the 'watch' page
+  return res.redirect(`/videos/${id}`);
 };
 
 //Delete
