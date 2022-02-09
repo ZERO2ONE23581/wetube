@@ -25,9 +25,9 @@ export const watch = (req, res) => {
 
 //Upload (Create)
 export const getUpload = (req, res) => {
-  res.render("upload");
+  res.render("upload", { pageTitle: "Upload Video" });
 };
-export const postUpload = (req, res) => {
+export const postUpload = async (req, res) => {
   //1. get data from form in template using POST method
   const { title, description, hashtags } = req.body;
   //2. create Document(video with data)
@@ -36,9 +36,14 @@ export const postUpload = (req, res) => {
     description: description,
     createdAt: Date.now(),
     hashtags: hashtags.split(",").map((word) => `#${word}`),
+    meta: {
+      views: 0,
+      rating: 0,
+    },
   });
   console.log(video);
   //3. save the document in db
+  await video.save();
   //4. redirect to the page
   res.redirect("/");
 };

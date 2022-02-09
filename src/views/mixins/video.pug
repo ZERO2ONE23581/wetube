@@ -1,5 +1,9 @@
 mixin videoMixin(info)
   div
-    h3=info.title
+    h3=info.title    
     ul     
       li=info.description
+      li=info.createdAt
+      li=info.hashtags
+      li=info.meta.views
+      li=info.meta.rating
