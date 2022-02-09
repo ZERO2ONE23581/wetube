@@ -4,13 +4,26 @@ import Video from "../models/Video";
 //Home (Read)
 export const home = async (req, res) => {
   //1. find the any video ( == database == Video model) that exists => Render 'home' page
-  const videos = await Video.find({});
+  const videos = await Video.find({}).sort({ createdAt: "desc" });
   return res.render("home", { pageTitle: "HOME", videos });
 };
 
 //Search
-export const search = (req, res) => {
-  res.send("SEARCH VIDEO");
+export const search = async (req, res) => {
+  //1. receive data from form(method="GET") by using 'req.query'
+  const { keyword } = req.query;
+  //2. find the video where the name of the 'title' is same as the 'keyword'
+  let videos = []; //update the videos array
+  if (keyword) {
+    videos = await Video.find({
+      //await을 안붙여주면 비디오찾기전에 렌더링이 시작되어 오류를 볼수있음!
+      title: {
+        $regex: new RegExp(keyword, "i"), //$regex is MongoDB operator!
+      },
+    });
+  }
+  //3. render 'search' page with result
+  return res.render("search", { pageTitle: "Search Video", videos });
 };
 
 //VIDEO ROUTER
