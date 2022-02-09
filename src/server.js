@@ -12,6 +12,7 @@ const logger = morgan("dev");
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
 //APP
+app.use(express.urlencoded({ extended: true })); //enable Express to undertand Form
 app.use(logger);
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);

@@ -1,6 +1,7 @@
 import Video from "../models/Video";
 
-//rootRouter
+//ROOT ROUTER
+//Home (Read)
 export const home = async (req, res) => {
   //PROMISE
   try {
@@ -15,17 +16,39 @@ export const home = async (req, res) => {
 export const search = (req, res) => {
   res.send("SEARCH VIDEO");
 };
-//videoRouter
+//VIDEO ROUTER
+//Watch (Read)
 export const watch = (req, res) => {
   console.log(req.params);
   res.send("WATCH VIDEO");
 };
-export const upload = (req, res) => {
-  res.send("UPLOAD VIDEO");
+
+//Upload (Create)
+export const getUpload = (req, res) => {
+  res.render("upload");
 };
+export const postUpload = (req, res) => {
+  //1. get data from form in template using POST method
+  const { title, description, hashtags } = req.body;
+  //2. create Document(video with data)
+  const video = new Video({
+    title: title,
+    description: description,
+    createdAt: Date.now(),
+    hashtags: hashtags.split(",").map((word) => `#${word}`),
+  });
+  console.log(video);
+  //3. save the document in db
+  //4. redirect to the page
+  res.redirect("/");
+};
+
+//Edit (Upldate)
 export const editVideo = (req, res) => {
   res.send("EDIT VIDEO");
 };
+
+//Delete
 export const deleteVideo = (req, res) => {
   res.send("DELETE VIDEO");
 };
