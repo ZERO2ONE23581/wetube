@@ -70,20 +70,23 @@ export const getEdit = async (req, res) => {
 export const postEdit = async (req, res) => {
   //1. Receive data from Edit page
   const { title, description, hashtags } = req.body;
-  //2. find the video to edit by id
+  //2. find the video to edit by id and using exists()
   const { id } = req.params;
-  const video = await Video.findById(id);
+  const video = await Video.exists({ _id: id });
+  //when there's the video that has same _id as the one(==id) from parameter => it returns TRUE
   if (!video) {
     return res.render("404", { pageTitle: "Video Not Found." });
   }
   //3. Edit the video with received data
-  video.title = title;
-  video.description = description;
-  video.hashtags = hashtags
-    .split(",")
-    .map((word) => (word.startsWith("#") ? word : `#${word}`));
-  //4. Save the new video
-  await video.save();
+  // this is the "Video model" that you created(and will update)
+  await Video.findByIdAndUpdate(id, {
+    //4. this query will automatically save the data
+    title,
+    description,
+    hashtags: hashtags
+      .split(",")
+      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+  });
   //5. Redirect to the 'watch' page
   return res.redirect(`/videos/${id}`);
 };
