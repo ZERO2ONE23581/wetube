@@ -1,4 +1,5 @@
 import User from "../models/User";
+import bcrypt from "bcrypt";
 
 //회원가입 Join
 export const getJoin = (req, res) => {
@@ -47,6 +48,26 @@ export const postJoin = async (req, res) => {
 export const getLogin = (req, res) => {
   return res.render("login", { pageTitle: "Login" });
 };
-export const postLogin = (req, res) => {
-  return res.end();
+export const postLogin = async (req, res) => {
+  //1. check if the account exsits and get the user we're looking for
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  if (!user) {
+    return res.status(400).render("login", {
+      pageTitle: "Login",
+      errorMessage: "An account with this username does not exist.",
+    });
+  }
+  console.log(user.password);
+  //2. check if the password correct. /// compare the pw from tempate && pw on db
+  const ok = await bcrypt.compare(password, user.password);
+  if (!ok) {
+    return res.status(400).render("login", {
+      pageTitle: "Login",
+      errorMessage: "Wrong password.",
+    });
+  }
+  //3. redirect to home
+  console.log("successfully logged in 💥");
+  return res.redirect("/");
 };
