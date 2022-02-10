@@ -35,7 +35,7 @@ export const watch = async (req, res) => {
   const video = await Video.findById(id);
   //3. Rendering 2 diff pages by existence of the video
   if (!video) {
-    return res.render("404", { pageTitle: "Video Not Found." });
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
   return res.render("watch", { pageTitle: video.title, video });
 };
@@ -60,7 +60,7 @@ export const postUpload = async (req, res) => {
     return res.redirect("/");
   } catch (error) {
     //6. error handling
-    return res.render("upload", {
+    return res.status(400).render("upload", {
       pageTitle: "Upload Video",
       errorMessage: error._message,
     });
@@ -74,7 +74,7 @@ export const getEdit = async (req, res) => {
   const video = await Video.findById(id);
   //2. Render the Edit page
   if (!video) {
-    return res.render("404", { pageTitle: "Video Not Found." });
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
   return res.render("edit", { pageTitle: video.title, video });
 };
@@ -86,7 +86,7 @@ export const postEdit = async (req, res) => {
   const video = await Video.exists({ _id: id });
   //when there's the video that has same _id as the one(==id) from parameter => it returns TRUE
   if (!video) {
-    return res.render("404", { pageTitle: "Video Not Found." });
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
   //3. Edit the video with received data
   // this is the "Video model" that you created(and will update)

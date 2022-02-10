@@ -10,7 +10,7 @@ export const postJoin = async (req, res) => {
   const { name, email, username, password, password2, location } = req.body;
   //4. password confirmation
   if (password !== password2) {
-    return res.render("join", {
+    return res.status(400).render("join", {
       pageTitle,
       errorMessage: "Password confirmation does not match",
     });
@@ -21,21 +21,26 @@ export const postJoin = async (req, res) => {
     $or: [{ username: req.body.username }, { email: req.body.email }],
   });
   if (exists) {
-    return res.render("join", {
+    return res.status(400).render("join", {
       pageTitle,
       errorMessage: "This username/email is already taken.",
     });
   }
   //2. create Model and save the data on mongodb
-  await User.create({
-    name,
-    email,
-    username,
-    password,
-    location,
-  });
-  //4. Redirect to login url
-  return res.redirect("/login");
+  try {
+    await User.create({
+      name,
+      email,
+      username,
+      password,
+      location,
+    });
+    //4. Redirect to login url
+    return res.redirect("/login");
+  } catch (error) {
+    //error handling
+    return res.status(400).render("join", { pageTitle, errorMessage: error._message });
+  }
 };
 
 //로그인 Login
