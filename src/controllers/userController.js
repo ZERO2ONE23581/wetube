@@ -1,5 +1,6 @@
 import User from "../models/User";
-import bcrypt, { compare } from "bcrypt";
+import bcrypt from "bcrypt";
+import fetch from "node-fetch";
 
 //회원가입 Join
 export const getJoin = (req, res) => {
@@ -78,6 +79,7 @@ export const postLogin = async (req, res) => {
 
 //깃헙로그인 Github Login
 export const startGithubLogin = (req, res) => {
+  //STEP1. Request a user's id to Github => User will say Yes => Github will give us github code
   const baseUrl = `https://github.com/login/oauth/authorize`;
   const config = {
     client_id: process.env.GH_CLIENT,
@@ -86,30 +88,41 @@ export const startGithubLogin = (req, res) => {
   };
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
-  console.log(finalUrl);
   return res.redirect(finalUrl);
 };
 
 export const finishGithubLogin = async (req, res) => {
-  //Now, you need to exchange github token to -> Access token!
+  //STEP1. Now, you need to exchange github code to -> Access token!
   const baseUrl = `https://github.com/login/oauth/access_token`;
   const config = {
-    client_id: process.env.GH_CLIENT, // this isn't secret, you put it in .env for convenience.
-    client_secret: process.env.GH_SECRET, //this should be secret that no one but you know!
-    code: req.query.code,
+    client_id: process.env.GH_CLIENT,
+    client_secret: process.env.GH_SECRET,
+    code: req.query.code, //this is the github code!!
   };
   const params = new URLSearchParams(config).toString();
-  console.log(params);
   const finalUrl = `${baseUrl}?${params}`;
-  console.log(finalUrl);
-  const data = await fetch(finalUrl, {
-    //fetch allows to POST request to finalUrl
-    //fetch is not in NodeJS
-    method: "POST",
-    headers: {
-      Accept: "application/json", //this enables to see not as text but json shape
-    },
-  });
-  const json = await data.json(); // extract json from the data given by fetch
-  console.log(json);
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      //fetch allows to POST request to finalUrl
+      //fetch is not in NodeJS, so you shoud npm i node-fetch@2.6.1 (the recent one won't work!)
+      method: "POST",
+      headers: {
+        Accept: "application/json", //this enables to see not as text but json shape
+      },
+    })
+  ).json(); //Now, you have Access token!
+  if ("access_token" in tokenRequest) {
+    //STEP3. Use the access token to acess the API
+    const { access_token } = tokenRequest;
+    const userRequest = await (
+      await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userRequest); // now you're able to get access to user data from Github!
+  } else {
+    return res.redirect("/login");
+  }
 };
