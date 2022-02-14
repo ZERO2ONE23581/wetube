@@ -58,7 +58,6 @@ export const postLogin = async (req, res) => {
       errorMessage: "An account with this username does not exist.",
     });
   }
-  console.log(user.password);
   //2. check if the password correct. /// compare the pw from tempate && pw on db
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
@@ -67,6 +66,11 @@ export const postLogin = async (req, res) => {
       errorMessage: "Wrong password.",
     });
   }
+  //4. Remembering User!
+  /// My Backend gives session-id (inside the cookie) to the Browser!
+  /// and this will add extra information(loggedIn:true, user) in the session!
+  req.session.loggedIn = true;
+  req.session.user = user;
   //3. redirect to home
   console.log("successfully logged in 💥");
   return res.redirect("/");

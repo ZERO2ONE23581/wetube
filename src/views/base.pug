@@ -10,10 +10,11 @@ html(lang="ko")
         ul
           li
             a(href="/") HOME
-          li
-            a(href="/join") JOIN
-          li
-            a(href="/login") LOGIN
+          if !req.session.loggedIn
+            li
+              a(href="/join") JOIN
+            li
+              a(href="/login") LOGIN
           li
             a(href="/search") SEARCH      
           li
