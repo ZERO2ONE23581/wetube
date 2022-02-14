@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
-import session from "express-session";
+import session from "express-session"; //session
+import MongoStore from "connect-mongo"; //session-store
 import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
@@ -22,6 +23,9 @@ app.use(
     secret: "hello!",
     resave: true,
     saveUninitialized: true,
+    //session store; connect sessions to mongodb
+    ///session is created when someone visits my website! // Now, even when I restart the server, the user is still logged in!
+    store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/wetube" }),
   })
 );
 app.use(localsMiddleware); //locals
