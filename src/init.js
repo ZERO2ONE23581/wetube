@@ -1,3 +1,4 @@
+import "dotenv/config"; //you should import dotenv to activate on top of your code!
 import "./db"; // server import this file to connect the server to mongodb
 
 //This connects db file to mongoose => let db to notice there's a Model!

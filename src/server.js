@@ -11,6 +11,8 @@ import { localsMiddleware } from "./middlewares";
 const app = express();
 const logger = morgan("dev");
 
+console.log(process.env.COOKIE_SECRET);
+
 //PUG
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
@@ -20,12 +22,13 @@ app.use(logger);
 app.use(
   //session; this middleware will remember everybody who visits my website!
   session({
-    secret: "hello!",
-    resave: true,
-    saveUninitialized: true,
+    secret: process.env.COOKIE_SECRET,
+    //this will enable db to only save session-id of loggedIn user
+    resave: false,
+    saveUninitialized: false,
     //session store; connect sessions to mongodb
     ///session is created when someone visits my website! // Now, even when I restart the server, the user is still logged in!
-    store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/wetube" }),
+    store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
 app.use(localsMiddleware); //locals
