@@ -132,13 +132,31 @@ export const finishGithubLogin = async (req, res) => {
       })
     ).json();
     //now you're able to get access to user's email data from Github!
-    console.log("THIS IS WHOLE EMAIL DATA", emailData);
-    const email = emailData.find(
+    const emailObj = emailData.find(
       (email) => email.primary === true && email.verified === true
     );
-    console.log("THIS IS PRIMARY AND VERIFIED ONE", email);
-    if (!email) {
+    if (!emailObj) {
       return res.redirect("/login");
+    }
+    const existingUser = await User.findOne({ email: emailObj.email });
+    // if there's a JOINED USER with PIRAMRY && VERIFIED GITHUB EMAIL => get them logged in
+    if (existingUser) {
+      req.session.loggedIn = true;
+      req.session.user = existingUser;
+      return res.redirect("/");
+    } else {
+      //create an account if there's no github account to login => get them logged in
+      const user = await User.create({
+        name: userData.name,
+        username: userData.login,
+        email: emailObj.email,
+        password: "",
+        socialOnly: true,
+        location: userData.location,
+      });
+      req.session.loggedIn = true;
+      req.session.user = user;
+      return res.redirect("/");
     }
   } else {
     return res.redirect("/login");

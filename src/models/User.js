@@ -3,10 +3,11 @@ import bcrypt from "bcrypt";
 
 //Define the shape(schema) of the Model
 const userSchema = new mongoose.Schema({
+  socialOnly: { type: Boolean, default: false },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   location: { type: String },
 });
 
