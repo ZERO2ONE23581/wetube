@@ -52,7 +52,8 @@ export const getLogin = (req, res) => {
 export const postLogin = async (req, res) => {
   //1. check if the account exsits and get the user we're looking for
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  // username should be matched and the account wasn't made by github login (==socialOnly:false)
+  const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(400).render("login", {
       pageTitle: "Login",
@@ -67,7 +68,7 @@ export const postLogin = async (req, res) => {
       errorMessage: "Wrong password.",
     });
   }
-  //4. Remembering User!
+  //4. Remembering User! (this is basically how you log the user in!)
   /// My Backend gives session-id (inside the cookie) to the Browser!
   /// and this will add extra information(loggedIn:true, user) in the session!
   req.session.loggedIn = true;
@@ -138,15 +139,11 @@ export const finishGithubLogin = async (req, res) => {
     if (!emailObj) {
       return res.redirect("/login");
     }
-    const existingUser = await User.findOne({ email: emailObj.email });
-    // if there's a JOINED USER with PIRAMRY && VERIFIED GITHUB EMAIL => get them logged in
-    if (existingUser) {
-      req.session.loggedIn = true;
-      req.session.user = existingUser;
-      return res.redirect("/");
-    } else {
-      //create an account if there's no github account to login => get them logged in
-      const user = await User.create({
+    let user = await User.findOne({ email: emailObj.email });
+    // if there is no user joined with github email => create an Account with github email!
+    if (!user) {
+      user = await User.create({
+        avatarUrl: userData.avatar_url,
         name: userData.name,
         username: userData.login,
         email: emailObj.email,
@@ -154,11 +151,15 @@ export const finishGithubLogin = async (req, res) => {
         socialOnly: true,
         location: userData.location,
       });
-      req.session.loggedIn = true;
-      req.session.user = user;
-      return res.redirect("/");
     }
+    req.session.loggedIn = true;
+    req.session.user = user; // if there's already a user joined with github email => log him in anyway
+    return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
+};
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
 };
