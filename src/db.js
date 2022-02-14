@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 //Connect the server to mongoDB
 mongoose.connect(process.env.DB_URL);
-console.log(process.env.DB_URL);
 
 //Mongoose gives access to the connection
 const db = mongoose.connection;

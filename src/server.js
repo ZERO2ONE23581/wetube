@@ -11,8 +11,6 @@ import { localsMiddleware } from "./middlewares";
 const app = express();
 const logger = morgan("dev");
 
-console.log(process.env.COOKIE_SECRET);
-
 //PUG
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
@@ -27,7 +25,6 @@ app.use(
     resave: false,
     saveUninitialized: false,
     //session store; connect sessions to mongodb
-    ///session is created when someone visits my website! // Now, even when I restart the server, the user is still logged in!
     store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
