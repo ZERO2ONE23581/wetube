@@ -1,5 +1,5 @@
 import User from "../models/User";
-import bcrypt from "bcrypt";
+import bcrypt, { compare } from "bcrypt";
 
 //회원가입 Join
 export const getJoin = (req, res) => {
@@ -80,7 +80,7 @@ export const postLogin = async (req, res) => {
 export const startGithubLogin = (req, res) => {
   const baseUrl = `https://github.com/login/oauth/authorize`;
   const config = {
-    client_id: "b68f8f040699d9ebe1c9",
+    client_id: process.env.GH_CLIENT,
     allow_signup: false,
     scope: "read:user user:email",
   };
@@ -90,4 +90,26 @@ export const startGithubLogin = (req, res) => {
   return res.redirect(finalUrl);
 };
 
-export const finishGithubLogin = (req, res) => {};
+export const finishGithubLogin = async (req, res) => {
+  //Now, you need to exchange github token to -> Access token!
+  const baseUrl = `https://github.com/login/oauth/access_token`;
+  const config = {
+    client_id: process.env.GH_CLIENT, // this isn't secret, you put it in .env for convenience.
+    client_secret: process.env.GH_SECRET, //this should be secret that no one but you know!
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  console.log(params);
+  const finalUrl = `${baseUrl}?${params}`;
+  console.log(finalUrl);
+  const data = await fetch(finalUrl, {
+    //fetch allows to POST request to finalUrl
+    //fetch is not in NodeJS
+    method: "POST",
+    headers: {
+      Accept: "application/json", //this enables to see not as text but json shape
+    },
+  });
+  const json = await data.json(); // extract json from the data given by fetch
+  console.log(json);
+};
