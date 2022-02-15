@@ -5,6 +5,8 @@ import {
   logout,
   getEdit,
   postEdit,
+  getChangePassword,
+  postChangePassword,
 } from "../controllers/userController";
 
 import { protectorMiddleware, publicOnlyMiddleware } from "../middlewares";
@@ -15,8 +17,13 @@ const userRouter = express.Router();
 userRouter.route("/github/start").all(publicOnlyMiddleware).get(startGithubLogin);
 userRouter.route("/github/finish").all(publicOnlyMiddleware).get(finishGithubLogin);
 
-//only users who're logged in => can log out, edit thier profile
+//only users who're logged in => can log out, edit thier profile, change password
 userRouter.route("/logout").all(protectorMiddleware).get(logout);
 userRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
+userRouter
+  .route("/change-password")
+  .all(protectorMiddleware)
+  .get(getChangePassword)
+  .post(postChangePassword);
 
 export default userRouter;

@@ -191,3 +191,16 @@ export const postEdit = async (req, res) => {
   req.session.user = updatedUser;
   return res.redirect("/users/edit");
 };
+
+//비번변경 CHANGE PASSWORD
+export const getChangePassword = (req, res) => {
+  //if the user is logged in by github, they go back to home.
+  if (req.session.user.socialOnly === true) {
+    return res.redirect("/");
+  }
+  return res.render("users/change-password", { pageTitle: "Change Password" });
+};
+export const postChangePassword = (req, res) => {
+  //send notification
+  return res.redirect("/");
+};
