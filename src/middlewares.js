@@ -5,3 +5,23 @@ export const localsMiddleware = (req, res, next) => {
   res.locals.loggedInUser = req.session.user || {}; //session(user data) -> locals
   next();
 };
+
+//Only ppl who are logged in => next()
+//otherwise, redirect to login page
+export const protectorMiddleware = (req, res, next) => {
+  if (req.session.loggedIn) {
+    return next();
+  } else {
+    return res.redirect("/login");
+  }
+};
+
+//Only ppl who are NOT logged in => next()
+//otherwise, redirect to home page
+export const publicOnlyMiddleware = (req, res, next) => {
+  if (!req.session.loggedIn) {
+    return next();
+  } else {
+    return res.redirect("/");
+  }
+};
