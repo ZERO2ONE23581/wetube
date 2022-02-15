@@ -29,8 +29,9 @@ app.use(
   })
 );
 app.use(localsMiddleware); //locals
-//Expose whole folder to Browser
+//This let express to allow users to look inside UPLOAD, ASSETS folder!
 app.use("/uploads", express.static("uploads"));
+app.use("/static", express.static("assets"));
 //Routeres
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
