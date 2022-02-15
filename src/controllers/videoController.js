@@ -5,7 +5,7 @@ import User from "../models/User";
 //Home (Read)
 export const home = async (req, res) => {
   //1. find the any video ( == database == Video model) that exists => Render 'home' page
-  const videos = await Video.find({}).sort({ createdAt: "desc" });
+  const videos = await Video.find({}).sort({ createdAt: "desc" }).populate("owner");
   return res.render("home", { pageTitle: "HOME", videos });
 };
 
@@ -21,7 +21,7 @@ export const search = async (req, res) => {
       title: {
         $regex: new RegExp(keyword, "i"), //$regex is MongoDB operator!
       },
-    });
+    }).populate("owner");
   }
   //3. render 'search' page with result
   return res.render("search", { pageTitle: "Search Video", videos });

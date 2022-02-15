@@ -4,8 +4,16 @@
 
 //Components
 @import "../scss/components/header.scss";
+@import "../scss/components/footer.scss";
+@import "../scss/components/video.scss";
+@import "../scss/components/shared.scss";
+@import "../scss/components/forms.scss";
+@import "../scss/components/social-login.scss";
 
 //Screens
+@import "./screens/search.scss";
+@import "./screens/profile.scss";
+@import "./screens/edit-profile.scss";
 
 //Defaults
 a {
@@ -18,4 +26,11 @@ body {
     Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   background-color: $bg;
   color: white;
+}
+
+main {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 50px;
 }

@@ -1,7 +1,7 @@
 import User from "../models/User";
-import Video from "../models/Video";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
+import { model } from "mongoose";
 
 //회원가입 Join
 export const getJoin = (req, res) => {
@@ -244,8 +244,14 @@ export const see = async (req, res) => {
   //1. find the user to update
   const { id } = req.params;
   //2. connect User model to Video Model using populate
-  const user = await User.findById(id).populate("videos");
-  console.log(user);
+  const user = await User.findById(id).populate({
+    path: "videos",
+    populate: {
+      path: "owner",
+      model: "User",
+    },
+  });
+
   if (!user) {
     return res.status(404).render("404", { pageTitle: "User not found." });
   }
