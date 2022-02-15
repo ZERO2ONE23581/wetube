@@ -9,23 +9,23 @@ html(lang="ko")
       nav
         ul
           li
-            a(href="/") HOME
+            a(href="/") Home
+          li
+            a(href="/search") Search      
           if loggedIn
             li
-              a(href="/users/logout") LOG OUT
+              a(href="/users/logout") Log Out
             li
               a(href="/myprofile") #{loggedInUser.name}의 Profile
             li
               a(href="/users/edit") Edit Profile
+            li
+              a(href="/videos/upload") Upload      
           else
             li
-              a(href="/join") JOIN
+              a(href="/join") Join
             li
-              a(href="/login") LOGIN
-          li
-            a(href="/search") SEARCH      
-          li
-            a(href="/videos/upload") UPLOAD      
+              a(href="/login") Login
     main
       block content
   include partials/footer
