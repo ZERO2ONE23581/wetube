@@ -1,4 +1,5 @@
 import Video from "../models/Video";
+import User from "../models/User";
 
 //ROOT ROUTER
 //Home (Read)
@@ -33,11 +34,15 @@ export const watch = async (req, res) => {
   const { id } = req.params;
   //2. Find the video with the id
   const video = await Video.findById(id);
+  console.log(video);
+  //4. import User
+  const owner = await User.findById(video.owner);
+  console.log(owner);
   //3. Rendering 2 diff pages by existence of the video
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
-  return res.render("watch", { pageTitle: video.title, video });
+  return res.render("watch", { pageTitle: video.title, video, owner });
 };
 
 //Upload (Create)
@@ -46,6 +51,10 @@ export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload Video" });
 };
 export const postUpload = async (req, res) => {
+  //8. connect Video model to User model; find the _id of the logged in user
+  const {
+    user: { _id },
+  } = req.session;
   //7. upload video file
   const { path } = req.file;
   //2. Data received from 'upload' page
@@ -54,6 +63,7 @@ export const postUpload = async (req, res) => {
   //4. Save the video at the same time
   try {
     await Video.create({
+      owner: _id, // 9. save _id of the currently logged in user to owner of the video!
       fileUrl: path,
       title,
       description,
