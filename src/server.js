@@ -29,6 +29,8 @@ app.use(
   })
 );
 app.use(localsMiddleware); //locals
+//Expose whole folder to Browser
+app.use("/uploads", express.static("uploads"));
 //Routeres
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
