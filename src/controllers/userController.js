@@ -200,7 +200,38 @@ export const getChangePassword = (req, res) => {
   }
   return res.render("users/change-password", { pageTitle: "Change Password" });
 };
-export const postChangePassword = (req, res) => {
-  //send notification
-  return res.redirect("/");
+export const postChangePassword = async (req, res) => {
+  //1. find the _id of user in session
+  //2. data to update from body
+  const {
+    session: {
+      user: { _id, password },
+    },
+    body: { oldPassword, newPassword, newPasswordConfirmation },
+  } = req;
+  //3. check if the old password is matched with the typed one.
+  const ok = await bcrypt.compare(oldPassword, password);
+  if (!ok) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The current password is incorrect.",
+    });
+  }
+  //2. pw confirmation
+  if (newPassword !== newPasswordConfirmation) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The password does not match confirmation.",
+    });
+  }
+  //3. find the user and update(save) the pw to hash
+  const user = await User.findById(_id);
+  console.log("OLD PW:", user.password);
+  user.password = newPassword;
+  console.log("NEW PW:", user.password);
+  await user.save(); //hash middleware engage the moment it is saved!
+  console.log("NEW PW HASHED", user.password);
+  //4. update the session as well!
+  req.session.user.password = user.password;
+  return res.redirect("/users/logout");
 };
