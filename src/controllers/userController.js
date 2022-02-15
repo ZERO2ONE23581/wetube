@@ -172,17 +172,18 @@ export const postEdit = async (req, res) => {
   //1. find users who are logged in by id (req.session.user.id) + other info (req.body)
   const {
     session: {
-      user: { _id },
+      user: { _id, avatarUrl },
     },
     body: { name, email, username, location },
     //4. upload files
     file, // you can upload files bc there's the multer middleware before postEdit in userRouter
   } = req;
-  console.log(file);
   //2. update (edit) user profile
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
+      //if the user don't put any new avatar? keep the oiriginal avatar
+      avatarUrl: file ? file.path : avatarUrl,
       name,
       email,
       username,
