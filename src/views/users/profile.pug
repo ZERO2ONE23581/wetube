@@ -1,3 +1,8 @@
 extends ../base
+include ../mixins/video
 
-block content
+block content  
+  each video in videos
+    +videoMixin(video)
+  else
+    li Nothing found.

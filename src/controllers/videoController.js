@@ -33,16 +33,14 @@ export const watch = async (req, res) => {
   //1. Get id from paramter
   const { id } = req.params;
   //2. Find the video with the id
-  const video = await Video.findById(id);
+  //4. Connect video with user /// populate fill the owner with real data
+  const video = await Video.findById(id).populate("owner");
   console.log(video);
-  //4. import User
-  const owner = await User.findById(video.owner);
-  console.log(owner);
   //3. Rendering 2 diff pages by existence of the video
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
-  return res.render("watch", { pageTitle: video.title, video, owner });
+  return res.render("watch", { pageTitle: video.title, video });
 };
 
 //Upload (Create)
