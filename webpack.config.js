@@ -5,15 +5,18 @@ module.exports = {
   //entry means source code (in this case main.js)
   ///entry is the file we'd like to transfrom from new js -> old ugly compressed version of js
   entry: "./src/client/js/main.js",
+  mode: "development",
+  watch: true, //this prevent "watching client console"(npm run assets) to stop running
   plugins: [
     new MiniCssExtractPlugin({
+      //this separates styles.css from js file
       filename: "css/styles.css",
     }),
   ],
-  mode: "development",
   output: {
     filename: "js/main.js",
     path: path.resolve(__dirname, "assets"), // this is where the transformed file is saved.
+    clean: true, //clean output folder before you build frontEnd
   },
   module: {
     rules: [
