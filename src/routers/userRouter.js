@@ -7,6 +7,7 @@ import {
   postEdit,
   getChangePassword,
   postChangePassword,
+  see,
 } from "../controllers/userController";
 
 import { protectorMiddleware, publicOnlyMiddleware, avatarUpload } from "../middlewares";
@@ -30,4 +31,5 @@ userRouter
   .get(getChangePassword)
   .post(postChangePassword);
 
+userRouter.route("/:id").get(see);
 export default userRouter;

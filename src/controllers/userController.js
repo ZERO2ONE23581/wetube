@@ -164,7 +164,7 @@ export const logout = (req, res) => {
   return res.redirect("/");
 };
 
-//프로필 편집 Edit
+//유저 편집 Edit
 export const getEdit = (req, res) => {
   return res.render("edit-profile", { pageTitle: "Edit-profile" });
 };
@@ -235,4 +235,16 @@ export const postChangePassword = async (req, res) => {
   //4. update the session as well!
   req.session.user.password = user.password;
   return res.redirect("/users/logout");
+};
+
+//프로필 USER PROFILE
+export const see = async (req, res) => {
+  //this page is for anybody so, we don't get id from session ///just like instagram profile page!!
+  //1. find the user to update
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).render("404", { pageTitle: "User not found." });
+  }
+  return res.render("users/profile", { pageTitle: user.name, user });
 };
