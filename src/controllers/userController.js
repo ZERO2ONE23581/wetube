@@ -175,7 +175,10 @@ export const postEdit = async (req, res) => {
       user: { _id },
     },
     body: { name, email, username, location },
+    //4. upload files
+    file, // you can upload files bc there's the multer middleware before postEdit in userRouter
   } = req;
+  console.log(file);
   //2. update (edit) user profile
   const updatedUser = await User.findByIdAndUpdate(
     _id,
@@ -226,11 +229,8 @@ export const postChangePassword = async (req, res) => {
   }
   //3. find the user and update(save) the pw to hash
   const user = await User.findById(_id);
-  console.log("OLD PW:", user.password);
   user.password = newPassword;
-  console.log("NEW PW:", user.password);
   await user.save(); //hash middleware engage the moment it is saved!
-  console.log("NEW PW HASHED", user.password);
   //4. update the session as well!
   req.session.user.password = user.password;
   return res.redirect("/users/logout");
