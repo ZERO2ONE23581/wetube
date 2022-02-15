@@ -1,13 +1,19 @@
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   //entry means source code (in this case main.js)
   ///entry is the file we'd like to transfrom from new js -> old ugly compressed version of js
   entry: "./src/client/js/main.js",
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/styles.css",
+    }),
+  ],
   mode: "development",
   output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "assets", "js"), // this is where the transformed file is saved.
+    filename: "js/main.js",
+    path: path.resolve(__dirname, "assets"), // this is where the transformed file is saved.
   },
   module: {
     rules: [
@@ -22,7 +28,7 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
     ],
   },
