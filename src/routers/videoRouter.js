@@ -7,7 +7,7 @@ import {
   postEdit,
   deleteVideo,
 } from "../controllers/videoController";
-import { protectorMiddleware } from "../middlewares";
+import { protectorMiddleware, videoUpload } from "../middlewares";
 
 const videoRouter = express.Router();
 
@@ -15,7 +15,11 @@ const videoRouter = express.Router();
 videoRouter.route("/:id([0-9a-f]{24})").get(watch);
 
 //Only loggedIn user can => upload, edit, delete videos!
-videoRouter.route("/upload").all(protectorMiddleware).get(getUpload).post(postUpload);
+videoRouter
+  .route("/upload")
+  .all(protectorMiddleware)
+  .get(getUpload)
+  .post(videoUpload.single("video"), postUpload); //videoUpload middleware allows to upload files
 videoRouter
   .route("/:id([0-9a-f]{24})/edit")
   .all(protectorMiddleware)

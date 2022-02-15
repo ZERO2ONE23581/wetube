@@ -46,12 +46,15 @@ export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload Video" });
 };
 export const postUpload = async (req, res) => {
+  //7. upload video file
+  const { path } = req.file;
   //2. Data received from 'upload' page
   const { title, description, hashtags } = req.body;
   //3. Create new Video; (Data from POST -> Video Model)
   //4. Save the video at the same time
   try {
     await Video.create({
+      fileUrl: path,
       title,
       description,
       hashtags: Video.formatHashtags(hashtags),
