@@ -81,12 +81,22 @@ export const postUpload = async (req, res) => {
 
 //Edit (Update)
 export const getEdit = async (req, res) => {
+  //Bug before; non owner can go to edit page
+  //Bug fixed; only the owner of the video can go to edit page
+  const {
+    user: { _id },
+  } = req.session;
   //1. Find the video to edit
   const { id } = req.params;
   const video = await Video.findById(id);
   //2. Render the Edit page
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video Not Found." });
+  }
+  console.log(video.owner, _id);
+  //3. Bugfix
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
   }
   return res.render("edit", { pageTitle: video.title, video });
 };
@@ -114,7 +124,17 @@ export const postEdit = async (req, res) => {
 
 //Delete
 export const deleteVideo = async (req, res) => {
-  const { id } = req.params; //1. find id the video to delete
+  const { id } = req.params; //1. find id of the video to delete
+  //3. Bugfix
+  //Bug fixed; only the owner can delete the video
+  const _id = req.session.user._id;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
+  }
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
   await Video.findByIdAndDelete(id); //2. delete the video by the id
   return res.redirect("/");
 };

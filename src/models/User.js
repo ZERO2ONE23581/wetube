@@ -16,7 +16,11 @@ const userSchema = new mongoose.Schema({
 
 //Hash Middleware
 userSchema.pre("save", async function () {
-  this.password = await bcrypt.hash(this.password, 5);
+  //Bug before; pw is hashed whenever you upload the new video so the user can't login after
+  //Bug fixed; code below enables to hash only when it's modified
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 5);
+  }
 });
 
 //Create the Model with schema
