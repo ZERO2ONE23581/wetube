@@ -35,7 +35,6 @@ export const watch = async (req, res) => {
   //2. Find the video with the id
   //4. Connect video with user /// populate fill the owner with real data
   const video = await Video.findById(id).populate("owner");
-  console.log(video);
   //3. Rendering 2 diff pages by existence of the video
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video Not Found." });
@@ -45,32 +44,34 @@ export const watch = async (req, res) => {
 
 //Upload (Create)
 export const getUpload = (req, res) => {
-  //1. Render 'upload' page
   return res.render("upload", { pageTitle: "Upload Video" });
 };
 export const postUpload = async (req, res) => {
-  //8. connect Video model to User model; find the _id of the logged in user
+  //5. connect Video model to User model;
+  /// find the _id (user) => save it to the newVideo => now Video has new owner(user:{_id})
   const {
     user: { _id },
   } = req.session;
-  //7. upload video file
-  const { path } = req.file;
-  //2. Data received from 'upload' page
+  const { path } = req.file; //4. upload video file
+  //1. Bring data from template
   const { title, description, hashtags } = req.body;
-  //3. Create new Video; (Data from POST -> Video Model)
-  //4. Save the video at the same time
+  //2. Create new Video with the data received and Save the video
   try {
-    await Video.create({
-      owner: _id, // 9. save _id of the currently logged in user to owner of the video!
-      fileUrl: path,
+    const newVideo = await Video.create({
+      owner: _id, //5.
+      fileUrl: path, //4.
       title,
       description,
       hashtags: Video.formatHashtags(hashtags),
     });
-    //5. redirect to the page
+    //6. Connect User model to Video model
+    /// find the user (logged in) => save the _id(newVideo) to the user => now user has new video array
+    const user = await User.findById(_id);
+    user.videos.push(newVideo._id);
+    user.save();
     return res.redirect("/");
   } catch (error) {
-    //6. error handling
+    //3. error handling
     return res.status(400).render("upload", {
       pageTitle: "Upload Video",
       errorMessage: error._message,

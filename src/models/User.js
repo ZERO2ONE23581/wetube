@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String },
   location: { type: String },
+  //there is only one owner for video while owner has many different videos.
+  videos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
 });
 
 //Hash Middleware
