@@ -93,7 +93,7 @@ export const startGithubLogin = (req, res) => {
 };
 
 export const finishGithubLogin = async (req, res) => {
-  //STEP1. Now, you need to exchange github code to -> Access token!
+  //STEP2. Now, you need to exchange github code to -> Access token!
   const baseUrl = `https://github.com/login/oauth/access_token`;
   const config = {
     client_id: process.env.GH_CLIENT,
@@ -124,7 +124,6 @@ export const finishGithubLogin = async (req, res) => {
       })
     ).json();
     // now you're able to get access to user's data from Github!
-    console.log(userData);
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -159,7 +158,16 @@ export const finishGithubLogin = async (req, res) => {
     return res.redirect("/login");
   }
 };
+//로그아웃
 export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
+};
+
+//프로필 편집 Edit
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: "Edit-profile" });
+};
+export const postEdit = (req, res) => {
+  return res.render("edit-profile");
 };
