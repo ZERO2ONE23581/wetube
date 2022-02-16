@@ -26,6 +26,21 @@ const handleDownload = async () => {
 
   await ffmpeg.run("-i", "recording.webm", "-r", "60", "output.mp4");
 
+  //4. 썸네일 만들기
+  await ffmpeg.run(
+    "-i",
+    "recording.webm",
+    "-ss",
+    "00:00:01",
+    "-frames:v",
+    "1",
+    "thumbnail.jpg"
+  );
+  //5. 썸네일 불러오기
+  const thumbFile = ffmpeg.FS("readFile", "thumbnail.jpg");
+  const thumbBlob = new Blob([thumbFile.buffer], { type: "image/jpg" });
+  const thumbUrl = URL.createObjectURL(thumbBlob);
+
   //3. 파일불러오기;
   /// 과정) mp4파일가져옴 - 파일로부터 data를 받음(blob) - Object URL을 만듬 -> a.href에 넣어줌
   const mp4File = ffmpeg.FS("readFile", "output.mp4");
@@ -40,6 +55,23 @@ const handleDownload = async () => {
   a.download = "MyRecording.mp4";
   document.body.appendChild(a);
   a.click(); //유저가 클릭한것 처럼 작동함
+
+  // 썸네일 생성
+  const thumbA = document.createElement("a");
+  thumbA.href = thumbUrl; //썸네일 url 삽입 ffmpeg
+  thumbA.download = "MyThumbnail.jpg";
+  document.body.appendChild(thumbA);
+  thumbA.click(); //유저가 클릭한것 처럼 작동함
+
+  //** ffmpeg 속도향상작업 **
+  //파일제거
+  ffmpeg.FS("unlink", "recording.webm");
+  ffmpeg.FS("unlink", "output.mp4");
+  ffmpeg.FS("unlink", "thumbnail.jpg");
+  // url제거
+  URL.revokeObjectURL(mp4Url);
+  URL.revokeObjectURL(thumbUrl);
+  URL.revokeObjectURL(videoFile);
 };
 
 //녹화 recording
