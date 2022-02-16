@@ -11,6 +11,7 @@ const videoControls = document.getElementById("videoControls");
 
 //GLOBAL
 let controlsTimeout = null;
+let controlsMovementTimeout = null;
 let volumeValue = 0.5; //초기 볼륨값 (글로벌 변수)
 video.volume = volumeValue;
 
@@ -90,21 +91,25 @@ const handleFullscreen = (event) => {
 };
 
 //MOUSE MOVE
-//넷플릭스처럼 마우스가 호버될때 클래스가 붙였다 지워졌다 하는 기능 구현
+//넷플릭스처럼 마우스가 움직일시 클래스가 붙였다 지워졌다 하는 기능 구현
+const hideControls = () => videoControls.classList.remove("showing");
+
 const handleMouseMove = () => {
-  //3. timeout will be cancelled when get your mouse back
+  //마우스가 비디오밖에 나가는 순간 hideControls가 (3초뒤) 발동되는데 그전후로 다시 들어오면 hideControls가 해제되는 if문
   if (controlsTimeout) {
     clearTimeout(controlsTimeout);
     controlsTimeout = null;
   }
-  videoControls.classList.add("showing"); //1. add showing class
+  if (controlsMovementTimeout) {
+    //timeout이 true일때 즉 마우스가 계속움직일때 timeout을 cancel하는 if문 (일종의 hover개념?) // 마우스가 정지하면 발동안함
+    clearTimeout(controlsMovementTimeout);
+    controlsMovementTimeout = null;
+  }
+  videoControls.classList.add("showing");
+  controlsMovementTimeout = setTimeout(hideControls, 3000); //3초뒤에 컨트롤 숨김는 함수발동
 };
 const handleMouseLeave = () => {
-  console.log(controlsTimeout);
-  controlsTimeout = setTimeout(() => {
-    //2. remove the class (setTimeout will give you id == controlsTimeout)
-    videoControls.classList.remove("showing");
-  }, 3000);
+  controlsTimeout = setTimeout(hideControls, 3000);
 };
 
 //EVENT LISTENER
