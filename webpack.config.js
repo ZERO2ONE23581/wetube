@@ -4,7 +4,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   //entry means source code (in this case main.js)
   ///entry is the file we'd like to transfrom from new js -> old ugly compressed version of js
-  entry: "./src/client/js/main.js",
+  entry: {
+    main: "./src/client/js/main.js",
+    videoPlayer: "./src/client/js/videoPlayer.js",
+  },
   mode: "development",
   watch: true, //this prevent "watching client console"(npm run assets) to stop running
   plugins: [
@@ -14,7 +17,7 @@ module.exports = {
     }),
   ],
   output: {
-    filename: "js/main.js",
+    filename: "js/[name].js",
     path: path.resolve(__dirname, "assets"), // this is where the transformed file is saved.
     clean: true, //clean output folder before you build frontEnd
   },
