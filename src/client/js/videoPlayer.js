@@ -12,6 +12,8 @@ const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
+console.log(videoContainer.dataset);
+
 //GLOBAL
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
@@ -45,7 +47,6 @@ const handleVolumeChange = (event) => {
   const {
     target: { value },
   } = event;
-  console.log(event.target.value);
   //mute시 range조정하면 mute해제 및 text 바뀜
   if (video.muted) {
     video.muted = false;
@@ -75,14 +76,12 @@ const handleTimelineChange = (event) => {
   const {
     target: { value },
   } = event;
-  console.log(event.target.value);
   video.currentTime = value;
 };
 
 //FULL SCREEN
 const handleFullscreen = (event) => {
   const fullscreen = document.fullscreenElement; //when it's NOT full screen, it returns NULL(==false)
-  console.log(fullscreen);
   //이 함수는 click event에 반응한다는것을 기억해라
   if (fullscreen) {
     document.exitFullscreen();
@@ -115,12 +114,24 @@ const handleMouseLeave = () => {
   controlsTimeout = setTimeout(hideControls, 3000);
 };
 
+//FRONT <-> BACK
+const handleEnded = () => {
+  console.log("video finished");
+  //1. pug(Back)에서 data 속성을 이용해 id를 남김
+  const { id } = videoContainer.dataset;
+  //2. fetch를 이용해 id를 -> POST request로 아래 URL로 보내게됨 -> registerView 컨트롤러 실행
+  fetch(`/api/videos/${id}/view`, {
+    method: "POST", //fetch는 원래 GET request를 보낸다 (디폴트)
+  });
+};
+
 //EVENT LISTENER
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
 video.addEventListener("loadeddata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate); //timeupdate; 실시간 재생 watch
+video.addEventListener("ended", handleEnded); //video의 영상이 끝나면, hadleEnded 함수실행
 videoContainer.addEventListener("mousemove", handleMouseMove);
 videoContainer.addEventListener("mouseleave", handleMouseLeave);
 timeline.addEventListener("input", handleTimelineChange);
