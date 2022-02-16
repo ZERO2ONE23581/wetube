@@ -15,6 +15,14 @@ const logger = morgan("dev");
 //PUG
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
+
+//ffmpeg 오류해결방법
+app.use((req, res, next) => {
+  res.header("Cross-Origin-Embedder-Policy", "require-corp");
+  res.header("Cross-Origin-Opener-Policy", "same-origin");
+  next();
+});
+
 //Middleswares
 app.use(express.urlencoded({ extended: true })); //enable Express to undertand Form
 app.use(logger);
