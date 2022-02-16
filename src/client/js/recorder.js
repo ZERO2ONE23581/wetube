@@ -1,14 +1,26 @@
 const startBtn = document.getElementById("startBtn");
 const video = document.getElementById("preview");
 
+//Global variable
 let stream;
 let recorder;
+let videoFile;
+
+//녹화다운
+const handleDownload = () => {
+  //create a link
+  const a = document.createElement("a");
+  a.href = videoFile;
+  a.download = "MyRecording.webm"; //MyRecording이라는 이름으로 저장할수 있게 해줌, webm은 확장자명 (extension)
+  document.body.appendChild(a);
+  a.click(); //유저가 클릭한것 처럼 작동함
+};
 
 //녹화 recording
 const handleStop = () => {
-  startBtn.innerText = "Start Recording";
+  startBtn.innerText = "Downlad Recording";
   startBtn.removeEventListener("click", handleStop);
-  startBtn.addEventListener("click", handleStart);
+  startBtn.addEventListener("click", handleDownload);
   //녹화중단
   recorder.stop();
 };
@@ -21,7 +33,7 @@ const handleStart = () => {
   recorder.start(); //2. 녹화시작
   //3. 녹화파일 생성
   recorder.ondataavailable = (event) => {
-    const videoFile = URL.createObjectURL(event.data); //메모리url 생성
+    videoFile = URL.createObjectURL(event.data); //메모리url 생성
     video.src = videoFile; //video 삽입
     video.srcObject = null; //이전 preview 삭제
     video.loop = true; //반복
