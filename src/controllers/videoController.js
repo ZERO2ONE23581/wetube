@@ -138,3 +138,17 @@ export const deleteVideo = async (req, res) => {
   await Video.findByIdAndDelete(id); //2. delete the video by the id
   return res.redirect("/");
 };
+
+//API FOR RECORDING VIEWS
+export const registerView = async (req, res) => {
+  //the router(controller) does not render any template.
+  ///URL doesn't change! (most basic interactive to connect FRONT and BACK)
+  const { id } = req.params;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.status(404);
+  }
+  video.meta.views = video.meta.views + 1;
+  await video.save();
+  return res.status(200); //200 means ok
+};
