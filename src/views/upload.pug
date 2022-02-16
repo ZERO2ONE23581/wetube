@@ -1,6 +1,9 @@
 extends base
 //- action에 찍힌 url로 post를 보내게 되는 것.
 block content
+  div
+    video#preview
+    button#startBtn Start Recording
   if errorMessage
     span=errorMessage
   form(method='post', enctype="multipart/form-data", action="/videos/upload")
@@ -10,3 +13,6 @@ block content
     input(required, type="text", name="description", placeholder="Description", maxlength=50)
     input(required, type="text", name="hashtags", placeholder="Hashtags, separted by comma.")
     input(type="submit", value="Upload Video")
+
+block scripts
+  script(src="/static/js/recorder.js")
