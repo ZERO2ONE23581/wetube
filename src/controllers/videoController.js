@@ -146,9 +146,9 @@ export const registerView = async (req, res) => {
   const { id } = req.params;
   const video = await Video.findById(id);
   if (!video) {
-    return res.status(404);
+    return res.sendStatus(404); //sendStatus를 써줘야 연결이 끝남. 아니면 pending된 상태로 남게됨
   }
   video.meta.views = video.meta.views + 1;
   await video.save();
-  return res.status(200); //200 means ok
+  return res.sendStatus(200); //200 means ok
 };
