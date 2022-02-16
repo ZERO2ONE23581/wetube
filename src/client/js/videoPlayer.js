@@ -5,6 +5,8 @@ const volumeRange = document.getElementById("volume");
 const currenTime = document.getElementById("currenTime");
 const totalTime = document.getElementById("totalTime");
 const timeline = document.getElementById("timeline");
+const fullScreenBtn = document.getElementById("fullScreen");
+const videoContainer = document.getElementById("videoContainer");
 
 //DEFAULT
 let volumeValue = 0.5; //초기 볼륨값 (글로벌 변수)
@@ -70,6 +72,21 @@ const handleTimelineChange = (event) => {
   console.log(event.target.value);
   video.currentTime = value;
 };
+
+//FULL SCREEN
+const handleFullscreen = (event) => {
+  const fullscreen = document.fullscreenElement; //when it's NOT full screen, it returns NULL(==false)
+  console.log(fullscreen);
+  //이 함수는 click event에 반응한다는것을 기억해라
+  if (fullscreen) {
+    document.exitFullscreen();
+    fullScreenBtn.innerText = "Enter Full Screen";
+  } else {
+    videoContainer.requestFullscreen();
+    fullScreenBtn.innerText = "Exit Full Screen";
+  }
+};
+
 //EVENT LISTENER
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
@@ -77,3 +94,4 @@ volumeRange.addEventListener("input", handleVolumeChange);
 video.addEventListener("loadedmetadata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate); //timeupdate; 실시간 재생 watch
 timeline.addEventListener("input", handleTimelineChange);
+fullScreenBtn.addEventListener("click", handleFullscreen);
