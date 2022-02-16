@@ -3,12 +3,13 @@
 @import "./config/reset.scss";
 
 //Components
-@import "../scss/components/header.scss";
-@import "../scss/components/footer.scss";
-@import "../scss/components/video.scss";
-@import "../scss/components/shared.scss";
-@import "../scss/components/forms.scss";
-@import "../scss/components/social-login.scss";
+@import "./components/header.scss";
+@import "./components/footer.scss";
+@import "./components/video.scss";
+@import "./components/shared.scss";
+@import "./components/forms.scss";
+@import "./components/social-login.scss";
+@import "./components/video-player.scss";
 
 //Screens
 @import "./screens/search.scss";
