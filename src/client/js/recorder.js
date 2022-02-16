@@ -26,12 +26,18 @@ const handleDownload = async () => {
 
   await ffmpeg.run("-i", "recording.webm", "-r", "60", "output.mp4");
 
+  //3. 파일불러오기;
+  /// 과정) mp4파일가져옴 - 파일로부터 data를 받음(blob) - Object URL을 만듬 -> a.href에 넣어줌
+  const mp4File = ffmpeg.FS("readFile", "output.mp4");
+  const mp4Blob = new Blob([mp4File.buffer], { type: "video/mp4" });
+  const mp4Url = URL.createObjectURL(mp4Blob);
+
   //--------------------------** webm -> mp4 파일변환 **------------------------------//
 
   //4. a태그생성 - a주소생성(브라우저url삽입) - 다운로드생성 - html에 a태그 삽입 - 클릭이벤트 넣어줌
   const a = document.createElement("a");
-  a.href = videoFile;
-  a.download = "MyRecording.webm"; //MyRecording이라는 이름으로 저장할수 있게 해줌, webm은 확장자명 (extension)
+  a.href = mp4Url; //mp4로 변환된 파일url 삽입 ffmpeg
+  a.download = "MyRecording.mp4";
   document.body.appendChild(a);
   a.click(); //유저가 클릭한것 처럼 작동함
 };
