@@ -7,8 +7,10 @@ const totalTime = document.getElementById("totalTime");
 const timeline = document.getElementById("timeline");
 const fullScreenBtn = document.getElementById("fullScreen");
 const videoContainer = document.getElementById("videoContainer");
+const videoControls = document.getElementById("videoControls");
 
-//DEFAULT
+//GLOBAL
+let controlsTimeout = null;
 let volumeValue = 0.5; //초기 볼륨값 (글로벌 변수)
 video.volume = volumeValue;
 
@@ -87,6 +89,24 @@ const handleFullscreen = (event) => {
   }
 };
 
+//MOUSE MOVE
+//넷플릭스처럼 마우스가 호버될때 클래스가 붙였다 지워졌다 하는 기능 구현
+const handleMouseMove = () => {
+  //3. timeout will be cancelled when get your mouse back
+  if (controlsTimeout) {
+    clearTimeout(controlsTimeout);
+    controlsTimeout = null;
+  }
+  videoControls.classList.add("showing"); //1. add showing class
+};
+const handleMouseLeave = () => {
+  console.log(controlsTimeout);
+  controlsTimeout = setTimeout(() => {
+    //2. remove the class (setTimeout will give you id == controlsTimeout)
+    videoControls.classList.remove("showing");
+  }, 3000);
+};
+
 //EVENT LISTENER
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
@@ -95,3 +115,5 @@ video.addEventListener("loadedmetadata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate); //timeupdate; 실시간 재생 watch
 timeline.addEventListener("input", handleTimelineChange);
 fullScreenBtn.addEventListener("click", handleFullscreen);
+video.addEventListener("mousemove", handleMouseMove);
+video.addEventListener("mouseleave", handleMouseLeave);
