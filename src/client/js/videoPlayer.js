@@ -4,6 +4,7 @@ const muteBtn = document.getElementById("mute");
 const volumeRange = document.getElementById("volume");
 const currenTime = document.getElementById("currenTime");
 const totalTime = document.getElementById("totalTime");
+const timeline = document.getElementById("timeline");
 
 //DEFAULT
 let volumeValue = 0.5; //초기 볼륨값 (글로벌 변수)
@@ -52,15 +53,27 @@ const formatTime = (seconds) => new Date(seconds * 1000).toISOString().substring
 //비디오 총 시간
 const handleLoadedMetadata = () => {
   totalTime.innerText = formatTime(Math.floor(video.duration));
+  //타임라인 최대치(max) 설정
+  timeline.max = Math.floor(video.duration);
 };
 //비디오 재생시간
 const handleTimeUpdate = () => {
   currenTime.innerText = formatTime(Math.floor(video.currentTime));
+  //타임라인에 따라 range 움직임
+  timeline.value = Math.floor(video.currentTime);
 };
-
+//타임레인지
+const handleTimelineChange = (event) => {
+  const {
+    target: { value },
+  } = event;
+  console.log(event.target.value);
+  video.currentTime = value;
+};
 //EVENT LISTENER
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
 video.addEventListener("loadedmetadata", handleLoadedMetadata);
-video.addEventListener("timeupdate", handleTimeUpdate);
+video.addEventListener("timeupdate", handleTimeUpdate); //timeupdate; 실시간 재생 watch
+timeline.addEventListener("input", handleTimelineChange);
