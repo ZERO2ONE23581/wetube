@@ -10,7 +10,6 @@ let volumeValue = 0.5; //초기 볼륨값 (글로벌 변수)
 video.volume = volumeValue;
 
 //VIDEO PLAY
-//play and pause function
 const handlePlayClick = (e) => {
   if (video.paused) {
     video.play();
@@ -48,14 +47,15 @@ const handleVolumeChange = (event) => {
 };
 
 //VIDEO TIME
+//시간형태 바꾸기 (JS Trick)
+const formatTime = (seconds) => new Date(seconds * 1000).toISOString().substring(11, 19);
 //비디오 총 시간
 const handleLoadedMetadata = () => {
-  totalTime.innerText = Math.floor(video.duration);
+  totalTime.innerText = formatTime(Math.floor(video.duration));
 };
 //비디오 재생시간
 const handleTimeUpdate = () => {
-  console.log(video.currentTime);
-  currenTime.innerText = Math.floor(video.currentTime);
+  currenTime.innerText = formatTime(Math.floor(video.currentTime));
 };
 
 //EVENT LISTENER
