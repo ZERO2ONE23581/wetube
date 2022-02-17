@@ -162,6 +162,7 @@ export const finishGithubLogin = async (req, res) => {
 //로그아웃
 export const logout = (req, res) => {
   req.session.destroy();
+  req.flash("info", "Bye Bye");
   return res.redirect("/");
 };
 
@@ -201,6 +202,7 @@ export const postEdit = async (req, res) => {
 export const getChangePassword = (req, res) => {
   //if the user is logged in by github, they go back to home.
   if (req.session.user.socialOnly === true) {
+    req.flash("error", "Can't change password, Please login with Github.");
     return res.redirect("/");
   }
   return res.render("users/change-password", { pageTitle: "Change Password" });
@@ -233,8 +235,10 @@ export const postChangePassword = async (req, res) => {
   const user = await User.findById(_id);
   user.password = newPassword;
   await user.save(); //hash middleware engage the moment it is saved!
+
   //4. update the session as well!
   req.session.user.password = user.password;
+  req.flash("info", "Password Updated!");
   return res.redirect("/users/logout");
 };
 

@@ -8,22 +8,22 @@ export const localsMiddleware = (req, res, next) => {
   next();
 };
 
-//Only ppl who are logged in => next()
-//otherwise, redirect to login page
+//Only ppl who are logged in => next() //otherwise, redirect to login page
 export const protectorMiddleware = (req, res, next) => {
   if (req.session.loggedIn) {
     return next();
   } else {
+    req.flash("error", "Not Authorized");
     return res.redirect("/login");
   }
 };
 
-//Only ppl who are NOT logged in => next()
-//otherwise, redirect to home page
+//Only ppl who are NOT logged in => next() //otherwise, redirect to home page
 export const publicOnlyMiddleware = (req, res, next) => {
   if (!req.session.loggedIn) {
     return next();
   } else {
+    req.flash("error", "Not Authorized");
     return res.redirect("/");
   }
 };

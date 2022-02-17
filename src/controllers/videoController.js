@@ -98,6 +98,7 @@ export const getEdit = async (req, res) => {
   console.log(video.owner, _id);
   //3. Bugfix
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "Not Authorized");
     return res.status(403).redirect("/");
   }
   return res.render("edit", { pageTitle: video.title, video });
@@ -134,7 +135,8 @@ export const deleteVideo = async (req, res) => {
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
-  if (String(video.owner) !== String(_id)) {
+  if (String(video.owner
+    req.flash("error", "You are not the owner of the video.")) !== String(_id)) {
     return res.status(403).redirect("/");
   }
   await Video.findByIdAndDelete(id); //2. delete the video by the id
