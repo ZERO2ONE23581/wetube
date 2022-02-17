@@ -1,9 +1,9 @@
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
+//전역변수
 const actionBtn = document.getElementById("actionBtn");
 const video = document.getElementById("preview");
 
-//Global variable
 let stream;
 let recorder;
 let videoFile;
@@ -14,18 +14,19 @@ const files = {
   thumb: "thumbnail.jpg",
 };
 
-//과정) a태그생성 - a주소생성(브라우저url삽입) - 다운로드 파일이름 생성 - html에 a태그 삽입 - 클릭이벤트 넣어줌
+//파일 다운로드
 const downloadFile = (fileUrl, fileName) => {
   const a = document.createElement("a");
-  a.href = fileUrl; //mp4로 변환된 파일url 삽입 ffmpeg
+  a.href = fileUrl;
   a.download = fileName;
   document.body.appendChild(a);
-  a.click(); //유저가 클릭한것 처럼 작동함
+  a.click();
+  ///a태그생성 - a주소생성(브라우저url삽입) - 다운로드 파일이름 생성 - html에 a태그 삽입 - 클릭이벤트 넣어줌
 };
 
-//7. 파일변환 FFMPEG
+//5. 파일변환 (FFMPEG) 및 다운로드 함수 실행
 const handleDownload = async () => {
-  actionBtn.removeEventListener("click", handleDownload); //다운로드 이벤트 제거
+  actionBtn.removeEventListener("click", handleDownload);
   actionBtn.innerText = "Transcoding...";
   actionBtn.disabled = true;
 
@@ -57,9 +58,9 @@ const handleDownload = async () => {
   const mp4Url = URL.createObjectURL(mp4Blob);
   const thumbUrl = URL.createObjectURL(thumbBlob);
 
-  //--------------------------** webm -> mp4 파일변환 **------------------------------//
+  //--------------------------** 다운로드 및 속도향상 **------------------------------//
 
-  //8. 다운로드
+  //6. 다운로드
   downloadFile(mp4Url, "MyRecording.mp4");
   downloadFile(thumbUrl, "MyThumbnail.jpg");
 
@@ -73,47 +74,55 @@ const handleDownload = async () => {
   URL.revokeObjectURL(thumbUrl);
   URL.revokeObjectURL(videoFile);
 
-  //8. 다운받은후 다시 복귀
+  //7. 다운받은후 다시 복귀
   actionBtn.disabled = false;
   actionBtn.innerText = "Record Again";
-  actionBtn.addEventListener("click", handleStart); //Record Again 클릭!
+  actionBtn.addEventListener("click", handleStart); //Record Again 클릭 => handleStart실생
 };
 
 //녹화 recording
-const handleStop = () => {
-  actionBtn.innerText = "Download Recording";
-  actionBtn.removeEventListener("click", handleStop);
-  actionBtn.addEventListener("click", handleDownload); //6. Download Recording 클릭!
-  recorder.stop(); //5. 녹화중단
-};
 const handleStart = () => {
-  actionBtn.innerText = "Stop Recording";
+  actionBtn.innerText = "Recording";
+  actionBtn.disabled = true;
   actionBtn.removeEventListener("click", handleStart);
-  actionBtn.addEventListener("click", handleStop); //4. Stop Recording 클릭!
 
   //1. stream을 받아와서 그걸로 => 녹음기 생성
-  recorder = new MediaRecorder(stream);
+  recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
 
   //2. 녹음준비
   recorder.ondataavailable = (event) => {
     // 녹화가 중단되면 발생하는 event
     videoFile = URL.createObjectURL(event.data); //브라우저가 열려있는 상태에서만 존재
-    video.src = videoFile;
     video.srcObject = null;
+    video.src = videoFile;
     video.loop = true;
     video.play();
+    actionBtn.innerText = "Download";
+    actionBtn.disabled = false;
+    actionBtn.addEventListener("click", handleDownload); //5. Download클릭 => handleDownload함수실행
   };
-  recorder.start(); //3. 녹화시작
+  //3. 녹화시작
+  recorder.start();
+  //4. 멈춤 (5초뒤)
+  setTimeout(() => {
+    recorder.stop();
+  }, 5000);
 };
 
 //미리보기 preview
 const init = async () => {
   //mediaDevices는 말그대로 카메라, 마이크등 접근가능하게함. stream은 0과1로된 데이터.
-  stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      width: 1024,
+      height: 576,
+    },
+  });
   //카메라가 stream을 담아와서 video tag에 넣어준것 => 재생순
   video.srcObject = stream;
   video.play(); //실시간 스트림
 };
-init(); //함수실행
+init(); //0. 함수실행
 
 actionBtn.addEventListener("click", handleStart);

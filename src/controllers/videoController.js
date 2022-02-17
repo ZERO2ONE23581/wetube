@@ -52,14 +52,16 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-  const { path } = req.file; //4. upload video file
+  const { video, thumb } = req.files; //4. upload video file
+  console.log(video, thumb);
   //1. Bring data from template
   const { title, description, hashtags } = req.body;
   //2. Create new Video with the data received and Save the video
   try {
     const newVideo = await Video.create({
       owner: _id, //5.
-      fileUrl: path, //4.
+      fileUrl: video[0].path, //4.
+      thumbUrl: thumb[0].path, //4.
       title,
       description,
       hashtags: Video.formatHashtags(hashtags),
