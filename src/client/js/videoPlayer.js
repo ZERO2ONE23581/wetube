@@ -12,8 +12,6 @@ const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
-console.log(videoContainer.dataset);
-
 //GLOBAL
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
@@ -116,7 +114,6 @@ const handleMouseLeave = () => {
 
 //FRONT <-> BACK
 const handleEnded = () => {
-  console.log("video finished");
   //1. pug(Back)에서 data 속성을 이용해 id를 남김
   const { id } = videoContainer.dataset;
   //2. fetch를 이용해 id를 -> POST request로 아래 URL로 보내게됨 -> registerView 컨트롤러 실행

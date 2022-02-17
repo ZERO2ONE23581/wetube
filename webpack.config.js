@@ -1,13 +1,16 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+const BASE_JS = "./src/client/js/";
+
 module.exports = {
   //entry means source code (in this case main.js)
   ///entry is the file we'd like to transfrom from new js -> old ugly compressed version of js
   entry: {
-    main: "./src/client/js/main.js",
-    videoPlayer: "./src/client/js/videoPlayer.js",
-    recorder: "./src/client/js/recorder.js",
+    main: BASE_JS + "main.js",
+    videoPlayer: BASE_JS + "videoPlayer.js",
+    recorder: BASE_JS + "recorder.js",
+    commentSection: BASE_JS + "commentSection.js",
   },
   mode: "development",
   watch: true, //this prevent "watching client console"(npm run assets) to stop running

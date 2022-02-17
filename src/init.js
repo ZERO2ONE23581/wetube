@@ -5,6 +5,7 @@ import "./db"; // server import this file to connect the server to mongodb
 ///When this line is created, you can see you have wetube db on mongodb!!
 import "./models/Video";
 import "./models/User";
+import "./models/Comments";
 
 //SERVER LISTENING
 import app from "./server";
