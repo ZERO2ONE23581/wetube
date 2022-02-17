@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-//Define the shape(schema) of the Model
+//Create schema for model
 const userSchema = new mongoose.Schema({
   avatarUrl: String,
   socialOnly: { type: Boolean, default: false },
@@ -10,8 +10,10 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String },
   location: { type: String },
-  //there is only one owner for video while owner has many different videos.
-  videos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
+
+  //ObjectId (id made by mongoose is unique!)
+  videos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }], //user had more than 1 video.
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }], //user has more than 1 comment.
 });
 
 //Hash Middleware

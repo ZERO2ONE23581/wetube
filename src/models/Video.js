@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-//Define the shape(schema) of the Model
+//Create schema for model
 const videoSchema = new mongoose.Schema({
   fileUrl: { type: String, required: true }, //녹화비디오 mp4 url
   thumbUrl: { type: String, required: true }, //썸네일 jpg파일 url
@@ -12,9 +12,10 @@ const videoSchema = new mongoose.Schema({
     views: { type: Number, default: 0, required: true },
     rating: { type: Number, default: 0, required: true },
   },
-  //owner == object id
-  //ref tells mongoose that the id we're gonna save is from User model
-  owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+
+  //ObjectId (id made by mongoose is unique!)
+  owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" }, //from 1 user.
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }], //video has more than 1 comment.
 });
 
 //Statics
