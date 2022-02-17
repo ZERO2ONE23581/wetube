@@ -1,5 +1,6 @@
 import Video from "../models/Video";
 import User from "../models/User";
+import Comment from "../models/Comments";
 
 //ROOT ROUTER
 //Home (Read)
@@ -160,7 +161,20 @@ export const registerView = async (req, res) => {
 
 //API for comment
 export const createComment = async (req, res) => {
-  console.log(req.params);
-  console.log(req.body.text, req.body.rating);
-  return res.end();
+  const {
+    session: { user },
+    body: { text },
+    params: { id },
+  } = req;
+  //find the video to comment on
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  const comment = await Comment.create({
+    owner: user._id,
+    text,
+    video: id,
+  });
+  return res.sendStatus(201);
 };
