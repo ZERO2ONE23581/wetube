@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 
 //Middleswares
 app.use(express.urlencoded({ extended: true })); //enable Express to undertand Form
+app.use(express.json());
 app.use(logger);
 //Session
 app.use(

@@ -7,11 +7,15 @@ const handleSubmit = (event) => {
   const text = textarea.value;
   //ready to send request to BACK
   const videoId = videoContainer.dataset.id;
+  if (text == "") {
+    return;
+  }
   fetch(`/api/videos/${videoId}/comment`, {
     method: "POST",
-    body: {
-      text,
+    headers: {
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({ text }),
   });
 };
 
