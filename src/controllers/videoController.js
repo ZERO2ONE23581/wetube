@@ -122,6 +122,7 @@ export const postEdit = async (req, res) => {
     hashtags: Video.formatHashtags(hashtags),
   });
   //5. Redirect to the 'watch' page
+  req.flash("sucess", "Changes saved.");
   return res.redirect(`/videos/${id}`);
 };
 
@@ -135,8 +136,8 @@ export const deleteVideo = async (req, res) => {
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
-  if (String(video.owner
-    req.flash("error", "You are not the owner of the video.")) !== String(_id)) {
+  if (String(video.owner) !== String(_id)) {
+    req.flash("error", "You are not the owner of the video.");
     return res.status(403).redirect("/");
   }
   await Video.findByIdAndDelete(id); //2. delete the video by the id
