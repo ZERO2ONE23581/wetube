@@ -157,3 +157,10 @@ export const registerView = async (req, res) => {
   await video.save();
   return res.sendStatus(200); //200 means ok
 };
+
+//API for comment
+export const createComment = async (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+  return res.end();
+};
