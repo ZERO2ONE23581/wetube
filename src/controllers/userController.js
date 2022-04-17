@@ -1,21 +1,21 @@
-import User from "../models/User";
-import bcrypt from "bcrypt";
-import fetch from "node-fetch";
-import { model } from "mongoose";
+import User from '../models/User';
+import bcrypt from 'bcryptjs';
+import fetch from 'node-fetch';
+import { model } from 'mongoose';
 
 //회원가입 Join
 export const getJoin = (req, res) => {
-  return res.render("join", { pageTitle: "Join" });
+  return res.render('join', { pageTitle: 'Join' });
 };
 export const postJoin = async (req, res) => {
-  const pageTitle = "join";
+  const pageTitle = 'join';
   //1. get data from template
   const { name, email, username, password, password2, location } = req.body;
   //4. password confirmation
   if (password !== password2) {
-    return res.status(400).render("join", {
+    return res.status(400).render('join', {
       pageTitle,
-      errorMessage: "Password confirmation does not match",
+      errorMessage: 'Password confirmation does not match',
     });
   }
   //3. 중복처리
@@ -24,9 +24,9 @@ export const postJoin = async (req, res) => {
     $or: [{ username: req.body.username }, { email: req.body.email }],
   });
   if (exists) {
-    return res.status(400).render("join", {
+    return res.status(400).render('join', {
       pageTitle,
-      errorMessage: "This username/email is already taken.",
+      errorMessage: 'This username/email is already taken.',
     });
   }
   //2. create Model and save the data on mongodb
@@ -39,16 +39,18 @@ export const postJoin = async (req, res) => {
       location,
     });
     //4. Redirect to login url
-    return res.redirect("/login");
+    return res.redirect('/login');
   } catch (error) {
     //error handling
-    return res.status(400).render("join", { pageTitle, errorMessage: error._message });
+    return res
+      .status(400)
+      .render('join', { pageTitle, errorMessage: error._message });
   }
 };
 
 //로그인 Login
 export const getLogin = (req, res) => {
-  return res.render("login", { pageTitle: "Login" });
+  return res.render('login', { pageTitle: 'Login' });
 };
 export const postLogin = async (req, res) => {
   //1. check if the account exsits and get the user we're looking for
@@ -56,17 +58,17 @@ export const postLogin = async (req, res) => {
   // username should be matched and the account wasn't made by github login (==socialOnly:false)
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
-    return res.status(400).render("login", {
-      pageTitle: "Login",
-      errorMessage: "An account with this username does not exist.",
+    return res.status(400).render('login', {
+      pageTitle: 'Login',
+      errorMessage: 'An account with this username does not exist.',
     });
   }
   //2. check if the password correct. /// compare the pw from tempate && pw on db
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
-    return res.status(400).render("login", {
-      pageTitle: "Login",
-      errorMessage: "Wrong password.",
+    return res.status(400).render('login', {
+      pageTitle: 'Login',
+      errorMessage: 'Wrong password.',
     });
   }
   //4. Remembering User! (this is basically how you log the user in!)
@@ -75,8 +77,8 @@ export const postLogin = async (req, res) => {
   req.session.loggedIn = true;
   req.session.user = user;
   //3. redirect to home
-  console.log("successfully logged in 💥");
-  return res.redirect("/");
+  console.log('successfully logged in 💥');
+  return res.redirect('/');
 };
 
 //깃헙로그인 Github Login
@@ -86,7 +88,7 @@ export const startGithubLogin = (req, res) => {
   const config = {
     client_id: process.env.GH_CLIENT,
     allow_signup: false,
-    scope: "read:user user:email",
+    scope: 'read:user user:email',
   };
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
@@ -107,16 +109,16 @@ export const finishGithubLogin = async (req, res) => {
     await fetch(finalUrl, {
       //fetch allows to POST request to finalUrl
       //fetch is not in NodeJS, so you shoud npm i node-fetch@2.6.1 (the recent one won't work!)
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json", //this enables to see not as text but json shape
+        Accept: 'application/json', //this enables to see not as text but json shape
       },
     })
   ).json(); //Now, you have Access token!
-  if ("access_token" in tokenRequest) {
+  if ('access_token' in tokenRequest) {
     //STEP3. Use the access token to acess the API
     const { access_token } = tokenRequest;
-    const apiUrl = "https://api.github.com";
+    const apiUrl = 'https://api.github.com';
     const userData = await (
       await fetch(`${apiUrl}/user`, {
         headers: {
@@ -137,7 +139,7 @@ export const finishGithubLogin = async (req, res) => {
       (email) => email.primary === true && email.verified === true
     );
     if (!emailObj) {
-      return res.redirect("/login");
+      return res.redirect('/login');
     }
     let user = await User.findOne({ email: emailObj.email });
     // if there is no user joined with github email => create an Account with github email!
@@ -147,28 +149,28 @@ export const finishGithubLogin = async (req, res) => {
         name: userData.name,
         username: userData.login,
         email: emailObj.email,
-        password: "",
+        password: '',
         socialOnly: true,
         location: userData.location,
       });
     }
     req.session.loggedIn = true;
     req.session.user = user; // if there's already a user joined with github email => log him in anyway
-    return res.redirect("/");
+    return res.redirect('/');
   } else {
-    return res.redirect("/login");
+    return res.redirect('/login');
   }
 };
 //로그아웃
 export const logout = (req, res) => {
   req.session.destroy();
-  req.flash("info", "Bye Bye");
-  return res.redirect("/");
+  req.flash('info', 'Bye Bye');
+  return res.redirect('/');
 };
 
 //유저 편집 Edit
 export const getEdit = (req, res) => {
-  return res.render("edit-profile", { pageTitle: "Edit-profile" });
+  return res.render('edit-profile', { pageTitle: 'Edit-profile' });
 };
 export const postEdit = async (req, res) => {
   //1. find users who are logged in by id (req.session.user.id) + other info (req.body)
@@ -195,17 +197,17 @@ export const postEdit = async (req, res) => {
   );
   //3. update the session in the mongodb
   req.session.user = updatedUser;
-  return res.redirect("/users/edit");
+  return res.redirect('/users/edit');
 };
 
 //비번변경 CHANGE PASSWORD
 export const getChangePassword = (req, res) => {
   //if the user is logged in by github, they go back to home.
   if (req.session.user.socialOnly === true) {
-    req.flash("error", "Can't change password, Please login with Github.");
-    return res.redirect("/");
+    req.flash('error', "Can't change password, Please login with Github.");
+    return res.redirect('/');
   }
-  return res.render("users/change-password", { pageTitle: "Change Password" });
+  return res.render('users/change-password', { pageTitle: 'Change Password' });
 };
 export const postChangePassword = async (req, res) => {
   //1. find the _id of user in session
@@ -219,16 +221,16 @@ export const postChangePassword = async (req, res) => {
   //3. check if the old password is matched with the typed one.
   const ok = await bcrypt.compare(oldPassword, password);
   if (!ok) {
-    return res.status(400).render("users/change-password", {
-      pageTitle: "Change Password",
-      errorMessage: "The current password is incorrect.",
+    return res.status(400).render('users/change-password', {
+      pageTitle: 'Change Password',
+      errorMessage: 'The current password is incorrect.',
     });
   }
   //2. pw confirmation
   if (newPassword !== newPasswordConfirmation) {
-    return res.status(400).render("users/change-password", {
-      pageTitle: "Change Password",
-      errorMessage: "The password does not match confirmation.",
+    return res.status(400).render('users/change-password', {
+      pageTitle: 'Change Password',
+      errorMessage: 'The password does not match confirmation.',
     });
   }
   //3. find the user and update(save) the pw to hash
@@ -238,8 +240,8 @@ export const postChangePassword = async (req, res) => {
 
   //4. update the session as well!
   req.session.user.password = user.password;
-  req.flash("info", "Password Updated!");
-  return res.redirect("/users/logout");
+  req.flash('info', 'Password Updated!');
+  return res.redirect('/users/logout');
 };
 
 //프로필 USER PROFILE
@@ -249,14 +251,14 @@ export const see = async (req, res) => {
   const { id } = req.params;
   //2. connect User model to Video Model using populate
   const user = await User.findById(id).populate({
-    path: "videos",
+    path: 'videos',
     populate: {
-      path: "owner",
-      model: "User",
+      path: 'owner',
+      model: 'User',
     },
   });
   if (!user) {
-    return res.status(404).render("404", { pageTitle: "User not found." });
+    return res.status(404).render('404', { pageTitle: 'User not found.' });
   }
-  return res.render("users/profile", { pageTitle: user.name, user });
+  return res.render('users/profile', { pageTitle: user.name, user });
 };
