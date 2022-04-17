@@ -1,18 +1,21 @@
 const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
 
-const addComment = (text) => {
-  //pug와 동일하게 만들어주기
+const addComment = (text, id) => {
   const videoComments = document.querySelector(".video__comments ul");
   const newComment = document.createElement("li");
+  newComment.dataset.id = id;
   newComment.className = "video__comment";
   const icon = document.createElement("i");
   icon.className = "fas fa-comment";
   const span = document.createElement("span");
   span.innerText = ` ${text}`;
+  const span2 = document.createElement("span");
+  span2.innerText = "❌";
   newComment.appendChild(icon);
   newComment.appendChild(span);
-  videoComments.prepend(newComment); //태그를 제일 위로 생성해줌.
+  newComment.appendChild(span2);
+  videoComments.prepend(newComment);
 };
 
 const handleSubmit = async (event) => {
@@ -23,17 +26,17 @@ const handleSubmit = async (event) => {
   if (text === "") {
     return;
   }
-  //FRONT request POST -> BACK -> return 'status code' 이과정이 시간이 걸림으로 await을 fetch에 붙여줌.
-  const { status } = await fetch(`/api/videos/${videoId}/comment`, {
+  const response = await fetch(`/api/videos/${videoId}/comment`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ text }),
   });
-  textarea.value = "";
-  if (status === 201) {
-    addComment(text);
+  if (response.status === 201) {
+    textarea.value = "";
+    const { newCommentId } = await response.json();
+    addComment(text, newCommentId);
   }
 };
 

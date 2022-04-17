@@ -1,6 +1,6 @@
 import Video from "../models/Video";
-import User from "../models/User";
 import Comment from "../models/Comment";
+import User from "../models/User";
 
 export const home = async (req, res) => {
   const videos = await Video.find({}).sort({ createdAt: "desc" }).populate("owner");
@@ -145,5 +145,5 @@ export const createComment = async (req, res) => {
   });
   video.comments.push(comment._id);
   video.save();
-  return res.sendStatus(201);
+  return res.status(201).json({ newCommentId: comment._id });
 };
